@@ -1,16 +1,21 @@
-import { Election } from "@/types/Election";
-
-
+import { Election } from '@/types/Election'
+import { mockElection } from '@/utils/mockElection'
 interface Props {
-  election?: Election
+  election: Election
+}
+
+function useElectionResults() {
+  const { candidates } = mockElection
+  return candidates.map(({ address }) => address)
 }
 
 export function Tally({ election }: Props) {
-  if (!election) return <></>
-  
+  const candidates = useElectionResults()
+  console.log({ candidates })
   return (
     <>
       Results for Election
+      {candidates.map((address) => address)}
     </>
   )
 }

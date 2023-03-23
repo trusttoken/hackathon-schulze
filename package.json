@@ -14,10 +14,13 @@
   "license": "ISC",
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^2.0.2",
+    "@types/lodash": "^4.14.191",
     "hardhat": "^2.13.0",
     "solhint": "^3.4.1"
   },
   "dependencies": {
-    "@openzeppelin/contracts": "^4.8.2"
+    "@openzeppelin/contracts": "^4.8.2",
+    "lodash": "^4.17.21",
+    "react-hook-form": "^7.38.0"
   }
 }

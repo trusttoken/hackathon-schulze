@@ -1,49 +1,49 @@
 import { useRegistrationStatus } from '@/hooks/useRegistrationStatus'
-import { Election } from '@/types/Election'
-import { Button, Container, Input, Radio, RadioGroup, Stack } from '@chakra-ui/react'
+import { ParticipantType, Election } from '@/types/Election'
+import {
+  Button,
+  Container,
+  FormControl,
+  FormLabel,
+  Heading,
+  Input,
+  Radio,
+  RadioGroup,
+  Stack,
+  Textarea,
+} from '@chakra-ui/react'
 import { useEthers } from '@usedapp/core'
 import { useState } from 'react'
 
 interface Props {
-  election?: Election
-}
-
-const ConnectButton = () => {
-  const { account, deactivate, activateBrowserWallet } = useEthers()
-  // 'account' being undefined means that we are not connected.
-  if (account) return <button onClick={() => deactivate()}>Disconnect</button>
-  else return <Button onClick={() => activateBrowserWallet()}>Connect</Button>
+  election: Election
 }
 
 export function Registration({ election }: Props) {
   const { account } = useEthers()
-  const [type, setType] = useState<'voter' | 'candidate'>('voter')
-  const isRegistered = useRegistrationStatus(account)
-
-  if (!account) {
-    return (
-      <>
-        <p>Please connect your wallet</p>
-        <ConnectButton />
-      </>
-    )
-  }
+  const [type, setType] = useState<ParticipantType>('voter')
+  const { isRegistered, register } = useRegistrationStatus(account)
 
   if (isRegistered) {
-    return <p>Your address {account} is registered, wait for the election to start.</p>
+    return (
+      <p>
+        Your address {account} is registered, wait for the election to start.
+      </p>
+    )
   }
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault()
     console.log(`Registering ${account} as ${type}`)
+    register(true)
   }
 
   return (
-    <Container>
-      <h1>Register for Election</h1>
+    <>
+      <Heading>Register for Election</Heading>
       <form onSubmit={handleSubmit}>
         <Input value={account} disabled />
-        <RadioGroup onChange={setType} value={type}>
+        <RadioGroup onChange={(e: ParticipantType) => setType(e)} value={type}>
           <Stack spacing={5} direction="row">
             <Radio value="voter">Voter</Radio>
             <Radio value="candidate">Candidate</Radio>
@@ -51,13 +51,18 @@ export function Registration({ election }: Props) {
         </RadioGroup>
         {type === 'candidate' && (
           <>
-            <Input placeholder="Name" />
-            <Input placeholder="Description" />
-            <Input placeholder="Image" />
+            <FormControl>
+              <FormLabel>Project Name</FormLabel>
+              <Input placeholder="Name" />
+            </FormControl>
+            <FormControl>
+              <FormLabel>Project Description</FormLabel>
+              <Textarea placeholder="Description" />
+            </FormControl>
           </>
         )}
         <Button type="submit">Register</Button>
       </form>
-    </Container>
+    </>
   )
 }
