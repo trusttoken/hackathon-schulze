@@ -4,7 +4,7 @@ pragma solidity 0.8.18;
 import "@openzeppelin/contracts/access/AccessControlEnumerable.sol";
 
 import { Ballot, Ballots } from "./Ballot.sol";
-import { MAX_CANDIDATES } from "./Candidate.sol";
+import { Candidate, Candidates, MAX_CANDIDATES } from "./Candidate.sol";
 import { Distance, Distances } from "./Distance.sol";
 import { Path, Paths } from "./Path.sol";
 import { Sort, Sorts } from "./Sort.sol";
@@ -13,6 +13,7 @@ enum State { Register, Vote, Tally }
 
 contract SchulzeMethodElection is AccessControlEnumerable {
     using Ballots for Ballot;
+    using Candidates for Candidate;
     using Distances for Distance;
     using Paths for Path;
     using Sorts for Sort;
@@ -98,8 +99,11 @@ contract SchulzeMethodElection is AccessControlEnumerable {
 
     // State.Tally
 
-    function rankCandidates() external pure returns (address[] memory) {
-        address[] memory candidates;
+    function rankCandidates() external view returns (address[] memory) {
+        address[] memory candidates = new address[](sorts.length());
+        for (uint256 i; i < sorts.length(); i++) {
+            candidates[i] = getRoleMember(CANDIDATE_ROLE, sorts.at(i).index());
+        }
         return candidates;
     }
 }

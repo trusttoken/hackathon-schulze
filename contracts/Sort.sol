@@ -14,6 +14,14 @@ library Sorts {
     using Candidates for Candidate;
     using Paths for Path;
 
+    function at(Sort storage sort, uint256 i) internal view returns (Candidate) {
+        return sort.sorts[i];
+    }
+
+    function length(Sort storage sort) internal view returns (uint256) {
+        return sort.sorts.length;
+    }
+
     function calculate(Sort storage sort, Path storage path) internal {
         for (Candidate a; a.lt(path.numCandidates); a.next()) {
             sort.sorts.push(a);
