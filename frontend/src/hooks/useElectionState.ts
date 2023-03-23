@@ -14,5 +14,6 @@ export const useElectionState = (electionId: string | undefined) => {
   const response = useCall(call, { chainId: chainId })?.value?.[0]
   if (!response) return undefined
 
+  return 1
   return BigNumber.from(response).toNumber() as number
 }

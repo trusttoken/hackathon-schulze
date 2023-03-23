@@ -11,8 +11,8 @@ import { useRouter } from 'next/router'
 export default function ElectionPage() {
   const { account } = useEthers()
   const router = useRouter()
-  const { electionAddress } = router.query
-  const electionState = useElectionState(electionAddress as string | undefined)
+  const electionAddress = router.query.electionAddress as string | undefined
+  const electionState = useElectionState(electionAddress)
 
   if (!account) {
     return (
@@ -23,15 +23,21 @@ export default function ElectionPage() {
     )
   }
 
-  if (electionState === undefined) {
+  if (!electionAddress || electionState === undefined) {
     return <p>Loading...</p>
   }
 
   return (
     <Container>
-      {electionState === ElectionState.Register && <Registration />}
-      {electionState === ElectionState.Vote && <Vote />}
-      {electionState === ElectionState.Tally && <Results />}
+      {electionState === ElectionState.Register && (
+        <Registration electionAddress={electionAddress} />
+      )}
+      {electionState === ElectionState.Vote && (
+        <Vote electionAddress={electionAddress} />
+      )}
+      {electionState === ElectionState.Tally && (
+        <Results electionAddress={electionAddress} />
+      )}
     </Container>
   )
 }
