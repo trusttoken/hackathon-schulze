@@ -6,6 +6,8 @@ import "@openzeppelin/contracts/utils/math/Math.sol";
 import { Candidate, Candidates, MAX_CANDIDATES } from "./Candidate.sol";
 import { Distance, Distances } from "./Distance.sol";
 
+enum Cmp { Less, Equal, Greater }
+
 struct Path {
     uint256[MAX_CANDIDATES][MAX_CANDIDATES] paths;
     uint8 numCandidates;
@@ -14,6 +16,17 @@ struct Path {
 library Paths {
     using Candidates for Candidate;
     using Distances for Distance;
+
+    function cmp(Path storage path, Candidate a, Candidate b) internal view returns (Cmp) {
+        uint256 pathAB = Paths.p(path, a, b);
+        uint256 pathBA = Paths.p(path, b, a);
+        if (pathAB > pathBA) {
+            return Cmp.Greater;
+        } else if (pathAB < pathBA) {
+            return Cmp.Less;
+        }
+        return Cmp.Equal;
+    }
 
     function p(Path storage path, Candidate a, Candidate b) internal view returns (uint256) {
         return path.paths[a.index()][b.index()];
