@@ -1,14 +1,8 @@
 import { Election } from '@/types/Election'
 import { Heading, Text, VStack } from '@chakra-ui/react'
 import { useElectionResults } from '@/hooks/useElectionResults'
-import { mockElection } from '@/utils/mockElection'
-import { useEffect, useState } from 'react'
 
-interface Props {
-  election: Election
-}
-
-export function Results({ election }: Props) {
+export function Results() {
   const candidates = useElectionResults()
   return (
     <>

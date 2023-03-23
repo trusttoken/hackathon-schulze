@@ -15,11 +15,7 @@ import {
 import { useEthers } from '@usedapp/core'
 import { useState } from 'react'
 
-interface Props {
-  election: Election
-}
-
-export function Registration({ election }: Props) {
+export function Registration() {
   const { account } = useEthers()
   const [type, setType] = useState<ParticipantType>('voter')
   const { isRegistered, register } = useRegistrationStatus(account)
