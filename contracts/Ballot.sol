@@ -10,7 +10,7 @@ library Ballots {
     using Candidates for Candidate;
     using Ranks for Rank;
 
-    function isValid(Ballot ballot, uint256 numCandidates) internal pure returns (bool) {
+    function isValid(Ballot ballot, uint8 numCandidates) internal pure returns (bool) {
         assert(numCandidates <= MAX_CANDIDATES);
         uint256 extra = Ballot.unwrap(ballot) >> (8 * numCandidates);
         return extra == 0;

@@ -20,7 +20,7 @@ library Distances {
     }
 
     function setNumCandidates(Distance storage distance, uint8 _numCandidates) internal {
-        assert(_numCandidates < MAX_CANDIDATES);
+        assert(_numCandidates <= MAX_CANDIDATES);
         distance.numCandidates = _numCandidates;
     }
 

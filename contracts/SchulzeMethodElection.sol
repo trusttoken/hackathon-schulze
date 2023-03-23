@@ -4,6 +4,7 @@ pragma solidity 0.8.18;
 import "@openzeppelin/contracts/access/AccessControlEnumerable.sol";
 
 import { Ballot, Ballots } from "./Ballot.sol";
+import { MAX_CANDIDATES } from "./Candidate.sol";
 import { Distance, Distances } from "./Distance.sol";
 
 enum State { Register, Vote, Tally }
@@ -25,16 +26,29 @@ contract SchulzeMethodElection is AccessControlEnumerable {
 
     error InvalidState(State actualState, State expectedState);
     error InvalidBallot(Ballot ballot, uint256 numCandidates);
+    error TooManyCandidates(uint256 numCandidates, uint256 maxCandidates);
 
     modifier onlyState(State _expectedState) {
-        if (state != _expectedState) revert InvalidState(state, _expectedState);
+        if (state != _expectedState) {
+            revert InvalidState(state, _expectedState);
+        }
         _;
     }
 
     modifier requireValid(Ballot ballot) {
-        uint256 numCandidates = getRoleMemberCount(CANDIDATE_ROLE);
-        if (!ballot.isValid(numCandidates)) revert InvalidBallot(ballot, numCandidates);
+        uint8 _numCandidates = numCandidates();
+        if (!ballot.isValid(_numCandidates)) {
+            revert InvalidBallot(ballot, _numCandidates);
+        }
         _;
+    }
+
+    function numCandidates() public view returns (uint8) {
+        uint256 _numCandidates = getRoleMemberCount(CANDIDATE_ROLE);
+        if (_numCandidates > MAX_CANDIDATES) {
+            revert TooManyCandidates(_numCandidates, MAX_CANDIDATES);
+        }
+        return uint8(_numCandidates);
     }
 
     constructor () {
@@ -53,6 +67,7 @@ contract SchulzeMethodElection is AccessControlEnumerable {
 
     function closeRegistration() external onlyState(State.Register) onlyRole(DEFAULT_ADMIN_ROLE) {
         state = State.Vote;
+        distances.setNumCandidates(numCandidates());
         emit RegistrationClosed();
     }
 
