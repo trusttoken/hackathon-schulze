@@ -1,4 +1,4 @@
-import { Election } from "@/pages/election/[id]";
+import { Election } from "@/types/Election"
 
 
 interface Props {
