@@ -3,13 +3,17 @@ pragma solidity 0.8.18;
 
 import "@openzeppelin/contracts/access/AccessControlEnumerable.sol";
 
-import { Ballot, Ballots } from "./Ballot.sol";
-import { Candidate, Candidates, MAX_CANDIDATES } from "./Candidate.sol";
-import { Distance, Distances } from "./Distance.sol";
-import { Path, Paths } from "./Path.sol";
-import { Sort, Sorts } from "./Sort.sol";
+import {Ballot, Ballots} from "./Ballot.sol";
+import {Candidate, Candidates, MAX_CANDIDATES} from "./Candidate.sol";
+import {Distance, Distances} from "./Distance.sol";
+import {Path, Paths} from "./Path.sol";
+import {Sort, Sorts} from "./Sort.sol";
 
-enum State { Register, Vote, Tally }
+enum State {
+    Register,
+    Vote,
+    Tally
+}
 
 contract SchulzeMethodElection is AccessControlEnumerable {
     using Ballots for Ballot;
@@ -58,21 +62,31 @@ contract SchulzeMethodElection is AccessControlEnumerable {
         return uint8(_numCandidates);
     }
 
-    constructor () {
+    constructor() {
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
     }
 
     // State.Register
 
-    function _grantRole(bytes32 role, address account) internal override onlyState(State.Register) {
+    function _grantRole(
+        bytes32 role,
+        address account
+    ) internal override onlyState(State.Register) {
         super._grantRole(role, account);
     }
 
-    function _revokeRole(bytes32 role, address account) internal override onlyState(State.Register) {
+    function _revokeRole(
+        bytes32 role,
+        address account
+    ) internal override onlyState(State.Register) {
         super._revokeRole(role, account);
     }
 
-    function closeRegistration() external onlyState(State.Register) onlyRole(DEFAULT_ADMIN_ROLE) {
+    function closeRegistration()
+        external
+        onlyState(State.Register)
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
         state = State.Vote;
         distances.setNumCandidates(numCandidates());
         emit RegistrationClosed();
@@ -80,7 +94,9 @@ contract SchulzeMethodElection is AccessControlEnumerable {
 
     // State.Vote
 
-    function vote(Ballot ballot) external onlyState(State.Vote) onlyRole(VOTER_ROLE) requireValid(ballot) {
+    function vote(
+        Ballot ballot
+    ) external onlyState(State.Vote) onlyRole(VOTER_ROLE) requireValid(ballot) {
         Ballot storedBallot = ballotOf[msg.sender];
         if (storedBallot.exists()) {
             distances.removeBallot(storedBallot);
@@ -90,7 +106,11 @@ contract SchulzeMethodElection is AccessControlEnumerable {
         emit Voted(msg.sender, ballot);
     }
 
-    function closeVoting() external onlyState(State.Vote) onlyRole(DEFAULT_ADMIN_ROLE) {
+    function closeVoting()
+        external
+        onlyState(State.Vote)
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
         state = State.Tally;
         paths.calculate(distances);
         sorts.calculate(paths);
@@ -103,6 +123,15 @@ contract SchulzeMethodElection is AccessControlEnumerable {
         address[] memory candidates = new address[](sorts.length());
         for (uint256 i; i < sorts.length(); i++) {
             candidates[i] = getRoleMember(CANDIDATE_ROLE, sorts.at(i).index());
+        }
+        return candidates;
+    }
+
+    function getCandidates() external view returns (address[] memory) {
+        uint8 _numCandidates = numCandidates();
+        address[] memory candidates = new address[](_numCandidates);
+        for (uint8 i = 0; i < _numCandidates; i++) {
+            candidates[i] = getRoleMember(CANDIDATE_ROLE, i);
         }
         return candidates;
     }
