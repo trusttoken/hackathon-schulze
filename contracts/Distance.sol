@@ -6,7 +6,7 @@ import { Candidate, Candidates, MAX_CANDIDATES } from "./Candidate.sol";
 import { Rank, Ranks } from "./Rank.sol";
 
 struct Distance {
-    uint256[MAX_CANDIDATES][MAX_CANDIDATES] d;
+    uint256[MAX_CANDIDATES][MAX_CANDIDATES] distances;
     uint8 numCandidates;
 }
 
@@ -16,7 +16,7 @@ library Distances {
     using Ranks for Rank;
 
     function d(Distance storage distance, Candidate a, Candidate b) internal view returns (uint256) {
-        return distance.d[a.index()][b.index()];
+        return distance.distances[a.index()][b.index()];
     }
 
     function setNumCandidates(Distance storage distance, uint8 _numCandidates) internal {
@@ -30,9 +30,9 @@ library Distances {
                 Rank aRank = ballot.rankOf(a);
                 Rank bRank = ballot.rankOf(b);
                 if (aRank.gt(bRank)) {
-                    distance.d[a.index()][b.index()] += 1;
+                    distance.distances[a.index()][b.index()] += 1;
                 } else if (bRank.gt(aRank)) {
-                    distance.d[b.index()][a.index()] += 1;
+                    distance.distances[b.index()][a.index()] += 1;
                 }
             }
         }
@@ -44,9 +44,9 @@ library Distances {
                 Rank aRank = ballot.rankOf(a);
                 Rank bRank = ballot.rankOf(b);
                 if (aRank.gt(bRank)) {
-                    distance.d[a.index()][b.index()] -= 1;
+                    distance.distances[a.index()][b.index()] -= 1;
                 } else if (bRank.gt(aRank)) {
-                    distance.d[b.index()][a.index()] -= 1;
+                    distance.distances[b.index()][a.index()] -= 1;
                 }
             }
         }

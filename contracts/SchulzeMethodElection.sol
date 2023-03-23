@@ -6,19 +6,22 @@ import "@openzeppelin/contracts/access/AccessControlEnumerable.sol";
 import { Ballot, Ballots } from "./Ballot.sol";
 import { MAX_CANDIDATES } from "./Candidate.sol";
 import { Distance, Distances } from "./Distance.sol";
+import { Path, Paths } from "./Path.sol";
 
 enum State { Register, Vote, Tally }
 
 contract SchulzeMethodElection is AccessControlEnumerable {
     using Ballots for Ballot;
     using Distances for Distance;
+    using Paths for Path;
 
     bytes32 public constant CANDIDATE_ROLE = keccak256("CANDIDATE_ROLE");
     bytes32 public constant VOTER_ROLE = keccak256("VOTER_ROLE");
 
     State public state;
     mapping(address => Ballot) public ballotOf;
-    Distance distances;
+    Distance public distances;
+    Path public paths;
 
     event RegistrationClosed();
     event Voted(address, Ballot);
@@ -85,6 +88,7 @@ contract SchulzeMethodElection is AccessControlEnumerable {
 
     function closeVoting() external onlyState(State.Vote) onlyRole(DEFAULT_ADMIN_ROLE) {
         state = State.Tally;
+        paths.calculate(distances);
         emit VotingClosed();
     }
 
