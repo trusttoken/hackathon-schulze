@@ -14,7 +14,6 @@ export function Vote({ electionAddress }: Props) {
   const candidates = useCandidates(electionAddress)
   const shuffledCandidates = useShuffledCandidates(candidates)
   const ballot = useBallot(account, electionAddress)
-  // const registered = useRegistrationStatus(account, electionAddress)
 
   if (!candidates || !shuffledCandidates) {
     return <p>Loading...</p>
@@ -22,7 +21,7 @@ export function Vote({ electionAddress }: Props) {
 
   return (
     <Stack spacing={5}>
-      <Heading>Cast Your Ballot</Heading>
+      <Heading>Rank Candidates</Heading>
       {!!ballot && (
         <Alert status="success">
           <AlertIcon />
@@ -34,7 +33,6 @@ export function Vote({ electionAddress }: Props) {
         <AlertIcon />
         You are voting as {account}.
       </Alert>
-      <Heading size="md">Rank Candidates</Heading>
       <VoteForm
         electionAddress={electionAddress}
         candidates={candidates}

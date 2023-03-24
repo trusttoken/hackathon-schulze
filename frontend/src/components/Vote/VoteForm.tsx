@@ -9,6 +9,7 @@ import {
   NumberInput,
   NumberInputField,
   NumberInputStepper,
+  Stack,
   Text,
 } from '@chakra-ui/react'
 import { useForm } from 'react-hook-form'
@@ -49,44 +50,48 @@ export const VoteForm = ({
 
   const onSubmit = async (ballotData: VoteFormSchema) => {
     const ballotArgument = toBallotArgument(ballotData.candidates, candidates)
-    console.log('argument', ballotArgument)
     await send(ballotArgument)
   }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      {shuffledCandidates.map(({ name, description, imageUrl }, index) => (
-        <div key={index}>
-          <Flex gap={6}>
-            <div>
-              <NumberInput defaultValue={1} min={1} max={candidates.length}>
-                <NumberInputField
-                  {...register(`candidates.${index}.rank`, {
-                    valueAsNumber: true,
-                  })}
+      <Stack spacing={6}>
+        {shuffledCandidates.map(({ name, description, imageUrl }, index) => (
+          <div key={index}>
+            <Flex gap={10}>
+              <Box width={20}>
+                <Text fontSize={12}>Choose Rank</Text>
+                <NumberInput defaultValue={1} min={1} max={candidates.length}>
+                  <NumberInputField
+                    {...register(`candidates.${index}.rank`, {
+                      valueAsNumber: true,
+                    })}
+                  />
+                  <NumberInputStepper>
+                    <NumberIncrementStepper />
+                    <NumberDecrementStepper />
+                  </NumberInputStepper>
+                </NumberInput>
+              </Box>
+              <Box width={100} height={100} borderRadius={5} overflow="hidden">
+                <Image
+                  src={`data:image/png;base64,${imageUrl}`}
+                  width={300}
+                  height={100}
+                  alt="Candidate image"
                 />
-                <NumberInputStepper>
-                  <NumberIncrementStepper />
-                  <NumberDecrementStepper />
-                </NumberInputStepper>
-              </NumberInput>
-            </div>
-            <Box width={100} height={100} borderRadius={5} overflow="hidden">
-              <Image
-                src={`data:image/png;base64,${imageUrl}`}
-                width={300}
-                height={100}
-                alt="Candidate image"
-              />
-            </Box>
-            <Box>
-              <Heading size="sm">{name}</Heading>
-              <Text>{description}</Text>
-            </Box>
-          </Flex>
-        </div>
-      ))}
-      <Button type="submit">Submit Vote</Button>
+              </Box>
+              <Box>
+                <Heading size="md">{name}</Heading>
+                <Text>{description}</Text>
+              </Box>
+            </Flex>
+          </div>
+        ))}
+      </Stack>
+      <Button colorScheme="green" width="100%" type="submit">
+        Submit Vote
+      </Button>
     </form>
   )
 }

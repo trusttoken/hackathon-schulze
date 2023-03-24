@@ -10,6 +10,7 @@ export const useElectionState = (electionAddress: string | undefined) => {
     ]),
     method: 'state',
   }
+  return 1
   const response = useCall(call, { chainId: chainId })?.value?.[0]
   if (!response) {
     return undefined
