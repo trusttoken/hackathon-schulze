@@ -23,7 +23,7 @@ library Sorts {
     }
 
     function calculate(Sort storage sort, Path storage path) internal {
-        for (Candidate a; a.lt(path.numCandidates); a.next()) {
+        for (Candidate a; a.lt(path.numCandidates); a = a.next()) {
             sort.sorts.push(a);
             for (uint256 i = sort.sorts.length - 1; i > 0; i--) {
                 Candidate b = sort.sorts[i-1];
