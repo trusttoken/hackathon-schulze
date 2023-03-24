@@ -4,7 +4,7 @@ pragma solidity 0.8.18;
 import {SchulzeMethodElection} from "./SchulzeMethodElection.sol";
 
 contract SchulzeMethodElectionFactory {
-    constant BACKEND_ADDRESS = '0xED5337DBa349C6fdAAb3d014c13561c0D313Ce26'; // hardcoded for hackathon
+    address constant BACKEND_ADDRESS = 0xED5337DBa349C6fdAAb3d014c13561c0D313Ce26; // hardcoded for hackathon
     event ElectionCreated(SchulzeMethodElection);
 
     function create() external {
