@@ -2,6 +2,7 @@
 pragma solidity 0.8.18;
 
 import "@openzeppelin/contracts/access/AccessControlEnumerable.sol";
+import "@openzeppelin/contracts/proxy/utils/Initializable.sol";
 
 import {Ballot, Ballots} from "./Ballot.sol";
 import {Candidate, Candidates, MAX_CANDIDATES} from "./Candidate.sol";
@@ -16,7 +17,7 @@ enum State {
     Tally
 }
 
-contract SchulzeMethodElection is AccessControlEnumerable {
+contract SchulzeMethodElection is AccessControlEnumerable, Initializable {
     using Ballots for Ballot;
     using Candidates for Candidate;
     using Distances for Distance;
@@ -53,31 +54,9 @@ contract SchulzeMethodElection is AccessControlEnumerable {
         _;
     }
 
-    function numCandidates() public view returns (uint8) {
-        uint256 _numCandidates = getRoleMemberCount(CANDIDATE_ROLE);
-        if (_numCandidates > MAX_CANDIDATES) {
-            revert TooManyCandidates(_numCandidates, MAX_CANDIDATES);
-        }
-        return uint8(_numCandidates);
-    }
+    constructor() initializer() {}
 
-    function getCandidates() external view returns (address[] memory) {
-        uint8 _numCandidates = numCandidates();
-        address[] memory candidates = new address[](_numCandidates);
-        for (uint8 i = 0; i < _numCandidates; i++) {
-            candidates[i] = getRoleMember(CANDIDATE_ROLE, i);
-        }
-        return candidates;
-    }
-
-    function getVoterCandidateRank(
-        address voter,
-        Candidate candidate
-    ) external view returns (Rank) {
-        return ballotOf[voter].rankOf(candidate);
-    }
-
-    constructor() {
+    function initialize() external initializer() {
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
     }
 
@@ -131,6 +110,7 @@ contract SchulzeMethodElection is AccessControlEnumerable {
     }
 
     // State.Tally
+    // Views
 
     function rankCandidates() external view returns (address[] memory) {
         Path memory path;
@@ -145,5 +125,29 @@ contract SchulzeMethodElection is AccessControlEnumerable {
             candidates[i] = getRoleMember(CANDIDATE_ROLE, sort.get(i).index());
         }
         return candidates;
+    }
+
+    function numCandidates() public view returns (uint8) {
+        uint256 _numCandidates = getRoleMemberCount(CANDIDATE_ROLE);
+        if (_numCandidates > MAX_CANDIDATES) {
+            revert TooManyCandidates(_numCandidates, MAX_CANDIDATES);
+        }
+        return uint8(_numCandidates);
+    }
+
+    function getCandidates() external view returns (address[] memory) {
+        uint8 _numCandidates = numCandidates();
+        address[] memory candidates = new address[](_numCandidates);
+        for (uint8 i = 0; i < _numCandidates; i++) {
+            candidates[i] = getRoleMember(CANDIDATE_ROLE, i);
+        }
+        return candidates;
+    }
+
+    function getVoterCandidateRank(
+        address voter,
+        Candidate candidate
+    ) external view returns (Rank) {
+        return ballotOf[voter].rankOf(candidate);
     }
 }

@@ -49,8 +49,13 @@ describe("SchulzeMethodElection", function () {
   async function schulzeMethodFixture() {
     const [owner, a, b, c, d, e] = await ethers.getSigners();
 
+    const SchulzeMethodElectionFactory = await ethers.getContractFactory("SchulzeMethodElectionFactory");
+    const schulzeFactory = await SchulzeMethodElectionFactory.deploy();
+
     const SchulzeMethodElection = await ethers.getContractFactory("SchulzeMethodElection");
-    const schulze = await SchulzeMethodElection.deploy();
+    const tx = await schulzeFactory.create();
+    const schulzeAddress = (await tx.wait()).events[5].args[0];
+    const schulze = await SchulzeMethodElection.attach(schulzeAddress);
 
     const CANDIDATE_ROLE = await schulze.CANDIDATE_ROLE();
     schulze.grantRole(CANDIDATE_ROLE, a.address);
