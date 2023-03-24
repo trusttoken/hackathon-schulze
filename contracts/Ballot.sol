@@ -1,19 +1,28 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.18;
 
-uint8 constant MAX_CANDIDATES = 32;
+import { Candidate, Candidates, MAX_CANDIDATES } from "./Candidate.sol";
+import { Rank, Ranks } from "./Rank.sol";
 
-type Candidate is uint8;
-type Rank is uint8;
 type Ballot is uint256;
 
-library BallotAccess {
-    function boundsCheck(Candidate candidate) internal pure {
-        assert(Candidate.unwrap(candidate) < MAX_CANDIDATES);
+library Ballots {
+    using Candidates for Candidate;
+    using Ranks for Rank;
+
+    function isValid(Ballot ballot, uint8 numCandidates) internal pure returns (bool) {
+        assert(numCandidates <= MAX_CANDIDATES);
+        uint256 extra = Ballot.unwrap(ballot) >> (8 * numCandidates);
+        return extra == 0;
+    }
+
+    function exists(Ballot ballot) internal pure returns (bool) {
+        return Ballot.unwrap(ballot) != 0;
     }
 
     function rankOf(Ballot ballot, Candidate candidate) internal pure returns (Rank) {
-        boundsCheck(candidate);
-        return Rank.wrap(uint8(Ballot.unwrap(ballot) >> Candidate.unwrap(candidate)));
+        assert(candidate.lt(MAX_CANDIDATES));
+        uint8 rawRank = uint8(Ballot.unwrap(ballot) >> (8 * candidate.index()));
+        return Ranks.from(rawRank);
     }
 }
