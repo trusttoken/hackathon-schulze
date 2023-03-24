@@ -25,6 +25,12 @@ describe("SchulzeMethodElection", function () {
     return ballot;
   }
 
+  function constructVoter(owner) {
+    const voter = ethers.Wallet.createRandom().connect(ethers.provider);
+    owner.sendTransaction({to: voter.address, value: ethers.utils.parseEther("1")});
+    return voter;
+  }
+
   async function schulzeMethodFixture() {
     const [owner, a, b, c, d, e] = await ethers.getSigners();
 
@@ -42,8 +48,8 @@ describe("SchulzeMethodElection", function () {
     let voters = [];
     for (let [ballotString, count] of VOTERS) {
       const ballot = constructBallot(ballotString);
-      for (let _ in Array(count)) {
-        const voter = ethers.Wallet.createRandom();
+      for (let _ in [...Array(count)]) {
+        const voter = constructVoter(owner);
         schulze.grantRole(VOTER_ROLE, voter.address);
         voters.push([voter, ballot]);
       }
@@ -58,9 +64,8 @@ describe("SchulzeMethodElection", function () {
     schulze.closeRegistration();
     console.log("Closed registration");
 
-    for (let entry in voters) {
-      const voter = entry[0];
-      const ballot = entry[1];
+    for (let [voter, ballot] of voters) {
+      console.log("voter: " + voter + " ballot: " + ballot);
       await schulze.connect(voter).vote(ballot);
     }
 
