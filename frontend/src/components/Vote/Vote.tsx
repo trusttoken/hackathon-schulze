@@ -1,5 +1,6 @@
 import { useBallot } from '@/hooks/useBallot'
 import { useCandidates } from '@/hooks/useCandidates'
+import { useRegistrationStatus } from '@/hooks/useRegistrationStatus'
 import { useShuffledCandidates } from '@/hooks/useShuffledCandidates'
 import { Alert, AlertIcon, Box, Heading, Stack } from '@chakra-ui/react'
 import { useEthers } from '@usedapp/core'
@@ -14,6 +15,11 @@ export function Vote({ electionAddress }: Props) {
   const candidates = useCandidates(electionAddress)
   const shuffledCandidates = useShuffledCandidates(candidates)
   const ballot = useBallot(account, electionAddress)
+  const isRegisteredAsVoter = useRegistrationStatus(
+    account,
+    electionAddress,
+    'voter',
+  )
 
   if (!candidates || !shuffledCandidates) {
     return <p>Loading...</p>
@@ -29,12 +35,22 @@ export function Vote({ electionAddress }: Props) {
           preference.
         </Alert>
       )}
-      <Alert status="info">
-        <AlertIcon />
-        You are voting as {account}.
-      </Alert>
+      {isRegisteredAsVoter ? (
+        <>
+          <Alert status="info">
+            <AlertIcon />
+            You are voting as {account}.
+          </Alert>
+        </>
+      ) : (
+        <Alert status="error">
+          <AlertIcon />
+          Sorry, you are not registered as a voter. Voting won't work.
+        </Alert>
+      )}
       <Box paddingTop={10}>
         <VoteForm
+          disabled={!isRegisteredAsVoter}
           electionAddress={electionAddress}
           candidates={candidates}
           shuffledCandidates={shuffledCandidates}

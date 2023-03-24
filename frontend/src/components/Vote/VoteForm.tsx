@@ -22,6 +22,7 @@ interface Props {
   electionAddress: string
   candidates: Candidate[]
   shuffledCandidates: Candidate[]
+  disabled: boolean
 }
 
 export type CandidateChoice = Pick<Candidate, 'address'> & { rank: number }
@@ -33,6 +34,7 @@ export const VoteForm = ({
   electionAddress,
   shuffledCandidates,
   candidates,
+  disabled,
 }: Props) => {
   const { handleSubmit, register } = useForm<VoteFormSchema>({
     defaultValues: {
@@ -61,7 +63,12 @@ export const VoteForm = ({
             <Flex gap={10}>
               <Box width={20}>
                 <Text fontSize={12}>Choose Rank</Text>
-                <NumberInput defaultValue={1} min={1} max={candidates.length}>
+                <NumberInput
+                  isDisabled={disabled}
+                  defaultValue={1}
+                  min={1}
+                  max={candidates.length}
+                >
                   <NumberInputField
                     {...register(`candidates.${index}.rank`, {
                       valueAsNumber: true,
@@ -89,7 +96,12 @@ export const VoteForm = ({
           </div>
         ))}
       </Stack>
-      <Button colorScheme="green" width="100%" type="submit">
+      <Button
+        isDisabled={disabled}
+        colorScheme="green"
+        width="100%"
+        type="submit"
+      >
         Submit Vote
       </Button>
     </form>
