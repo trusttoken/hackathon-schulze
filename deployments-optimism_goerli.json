@@ -1,8 +1,8 @@
 {
   "optimism-goerli": {
     "schulzeMethodElectionFactory": {
-      "txHash": "0x76b14c3709f35e13fba052a60a308f671506ade82f83eb93f84bbff0d778fda9",
-      "address": "0xD50272409264A3327a68D6541EF2A32a908b02Cf",
+      "txHash": "0xbf819278f775ada689c73c2b55e59c53957c96925674642f06fd143746a2073f",
+      "address": "0x4f0a9Be69c6a8a72023a0F24aa2D70082C71e3E4",
       "multisig": false
     }
   }

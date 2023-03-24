@@ -1,0 +1,9 @@
+{
+  "goerli": {
+    "schulzeMethodElectionFactory": {
+      "txHash": "0xe38e77c5b5befb9d8dff4e29d2a871e6213ad1548b33f8520c4c3430e45e8b74",
+      "address": "0xEdDa1F9e25d50e5287E289Fe23D1a8DE06721987",
+      "multisig": false
+    }
+  }
+}
