@@ -113,16 +113,16 @@ contract SchulzeMethodElection is AccessControlEnumerable, Initializable {
     // Views
 
     function rankCandidates() external view returns (address[] memory) {
-        Path memory path;
-        path.calculate(distances);
+        Path memory paths;
+        paths.calculate(distances);
 
-        Sort memory sort;
-        sort.calculate(path);
+        Sort memory sorts;
+        sorts.calculate(paths);
 
         uint256 _numCandidates = numCandidates();
         address[] memory candidates = new address[](_numCandidates);
         for (uint256 i; i < _numCandidates; i++) {
-            candidates[i] = getRoleMember(CANDIDATE_ROLE, sort.get(i).index());
+            candidates[i] = getRoleMember(CANDIDATE_ROLE, sorts.get(i).index());
         }
         return candidates;
     }
@@ -149,5 +149,16 @@ contract SchulzeMethodElection is AccessControlEnumerable, Initializable {
         Candidate candidate
     ) external view returns (Rank) {
         return ballotOf[voter].rankOf(candidate);
+    }
+
+    function distance(Candidate a, Candidate b) external view returns (uint256) {
+        return distances.getD(a, b);
+    }
+
+    function path(Candidate a, Candidate b) external view returns (uint256) {
+        Path memory paths;
+        paths.calculate(distances);
+
+        return paths.getP(a, b);
     }
 }
