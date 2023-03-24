@@ -70,7 +70,10 @@ contract SchulzeMethodElection is AccessControlEnumerable {
         return candidates;
     }
 
-    function getVoterCandidateRank(address voter, Candidate candidate) external view returns (Rank) {
+    function getVoterCandidateRank(
+        address voter,
+        Candidate candidate
+    ) external view returns (Rank) {
         return ballotOf[voter].rankOf(candidate);
     }
 
