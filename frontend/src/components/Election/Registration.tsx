@@ -46,13 +46,14 @@ export function Registration({ electionAddress }: Props) {
       {isRegisteredAsVoter && (
         <Alert status="success">
           <AlertIcon />
-          You're registered as a voter, cast your vote when the election begins!
+          You&apos;re registered as a voter, cast your vote when the election
+          begins!
         </Alert>
       )}
       {isRegisteredAsCandidate && (
         <Alert status="success">
           <AlertIcon />
-          You're registered as a candidate, good luck!
+          You&apos;re registered as a candidate, good luck!
         </Alert>
       )}
       {(isRegisteredAsCandidate || isRegisteredAsVoter) && (

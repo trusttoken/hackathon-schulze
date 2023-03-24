@@ -38,7 +38,7 @@ export function Vote({ electionAddress }: Props) {
       ) : (
         <Alert status="error">
           <AlertIcon />
-          Sorry, you are not registered as a voter. Voting won't work.
+          Sorry, you are not registered as a voter. Voting won&apos;t work.
         </Alert>
       )}
       {!!ballot && (
