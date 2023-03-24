@@ -90,6 +90,7 @@ export const VoteForm = ({
         ))}
       </Stack>
       <Button
+        marginTop={10}
         loadingText="Submitting Your Vote"
         isLoading={loading}
         isDisabled={isDisabled}

@@ -7,12 +7,12 @@ interface Props {
 }
 
 export const CandidateItem = ({ candidate }: Props) => {
-  const { imageUrl, description, name } = candidate
+  const { description, name, address } = candidate
   return (
     <Flex gap={10}>
       <Box width={100} height={100} borderRadius={5} overflow="hidden">
         <Image
-          src={`data:image/png;base64,${imageUrl}`}
+          src={`https://loremflickr.com/100/100`}
           width={300}
           height={100}
           alt="Candidate image"
@@ -21,6 +21,7 @@ export const CandidateItem = ({ candidate }: Props) => {
       <Box>
         <Heading size="md">{name}</Heading>
         <Text>{description}</Text>
+        <Text>{address.substring(0, 8)}</Text>
       </Box>
     </Flex>
   )

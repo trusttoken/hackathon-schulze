@@ -1,7 +1,8 @@
-import { Heading, Text, VStack } from '@chakra-ui/react'
+import { Heading, Stack, HStack, Flex } from '@chakra-ui/react'
 import { useElectionResults } from '@/hooks/useElectionResults'
 import { useCandidates } from '@/hooks/useCandidates'
 import { Candidate } from '@/types/Candidate'
+import { CandidateItem } from '../CandidateItem'
 
 interface Props {
   electionAddress: string
@@ -10,6 +11,8 @@ interface Props {
 export function Results({ electionAddress }: Props) {
   const candidates = useCandidates(electionAddress)
   const results = useElectionResults(electionAddress)
+
+  console.log({ results })
 
   if (!candidates || !candidates.length || !results || !results.length) {
     return <p>Loading...</p>
@@ -21,18 +24,19 @@ export function Results({ electionAddress }: Props) {
   )
 
   return (
-    <>
+    <Stack spacing={10}>
       <Heading>Results</Heading>
-      <VStack textAlign="left" mt={4} spacing={4}>
+      <Stack spacing={4}>
         {results.map((address, rank) => {
           const candidate = candidateMap[address]
           return (
-            <Text w="full">
-              {rank + 1}. {candidate.name}
-            </Text>
+            <Flex justifyContent="center" alignItems="center" gap={7}>
+              <Heading color="gray.600">#{rank + 1}</Heading>
+              <CandidateItem candidate={candidate} />
+            </Flex>
           )
         })}
-      </VStack>
-    </>
+      </Stack>
+    </Stack>
   )
 }
