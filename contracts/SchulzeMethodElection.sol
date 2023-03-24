@@ -7,6 +7,7 @@ import {Ballot, Ballots} from "./Ballot.sol";
 import {Candidate, Candidates, MAX_CANDIDATES} from "./Candidate.sol";
 import {Distance, Distances} from "./Distance.sol";
 import {Path, Paths} from "./Path.sol";
+import {Rank} from "./Rank.sol";
 import {Sort, Sorts} from "./Sort.sol";
 
 enum State {
@@ -71,8 +72,8 @@ contract SchulzeMethodElection is AccessControlEnumerable {
         return candidates;
     }
 
-    function getVoterCandidateRank(address voter, Candidate candidate) returns (Rank) {
-        return ballotOf(voter).rankOf(candidate);
+    function getVoterCandidateRank(address voter, Candidate candidate) external view returns (Rank) {
+        return ballotOf[voter].rankOf(candidate);
     }
 
     constructor() {

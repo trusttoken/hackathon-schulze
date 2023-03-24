@@ -64,9 +64,14 @@ describe("SchulzeMethodElection", function () {
     schulze.closeRegistration();
     console.log("Closed registration");
 
+    const numCandidates = await schulze.numCandidates();
+
     for (let [voter, ballot] of voters) {
       console.log("voter: " + voter + " ballot: " + ballot);
       await schulze.connect(voter).vote(ballot);
+      for (let candidate in [...Array(numCandidates)]) {
+        console.log("    candidate: " + candidate + " rank: " + await schulze.getVoterCandidateRank(voter.address, candidate));
+      }
     }
 
     await schulze.closeVoting();
