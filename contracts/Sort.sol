@@ -27,10 +27,11 @@ library Sorts {
             sort.sorts.push(a);
             for (uint256 i = sort.sorts.length - 1; i > 0; i--) {
                 Candidate b = sort.sorts[i-1];
-                if (path.cmp(a, b) == Cmp.Greater) {
-                    sort.sorts[i] = b;
-                    sort.sorts[i-1] = a;
+                if (path.cmp(a, b) != Cmp.Greater) {
+                    break;
                 }
+                sort.sorts[i] = b;
+                sort.sorts[i-1] = a;
             }
         }
     }
