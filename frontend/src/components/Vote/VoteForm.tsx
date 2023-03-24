@@ -55,10 +55,22 @@ export const VoteForm = ({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <Heading>Vote</Heading>
       {shuffledCandidates.map(({ name, description, imageUrl }, index) => (
         <div key={index}>
           <Flex gap={6}>
+            <div>
+              <NumberInput defaultValue={1} min={1} max={candidates.length}>
+                <NumberInputField
+                  {...register(`candidates.${index}.rank`, {
+                    valueAsNumber: true,
+                  })}
+                />
+                <NumberInputStepper>
+                  <NumberIncrementStepper />
+                  <NumberDecrementStepper />
+                </NumberInputStepper>
+              </NumberInput>
+            </div>
             <Box width={100} height={100} borderRadius={5} overflow="hidden">
               <Image
                 src={`data:image/png;base64,${imageUrl}`}
@@ -72,16 +84,6 @@ export const VoteForm = ({
               <Text>{description}</Text>
             </Box>
           </Flex>
-
-          <NumberInput defaultValue={1} min={1} max={candidates.length}>
-            <NumberInputField
-              {...register(`candidates.${index}.rank`, { valueAsNumber: true })}
-            />
-            <NumberInputStepper>
-              <NumberIncrementStepper />
-              <NumberDecrementStepper />
-            </NumberInputStepper>
-          </NumberInput>
         </div>
       ))}
       <Button type="submit">Submit Vote</Button>

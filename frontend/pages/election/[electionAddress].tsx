@@ -28,7 +28,7 @@ export default function ElectionPage() {
   }
 
   return (
-    <Container>
+    <Container padding={5}>
       {electionState === ElectionState.Register && (
         <Registration electionAddress={electionAddress} />
       )}

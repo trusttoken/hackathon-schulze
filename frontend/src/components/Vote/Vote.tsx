@@ -1,7 +1,7 @@
 import { useBallot } from '@/hooks/useBallot'
 import { useCandidates } from '@/hooks/useCandidates'
 import { useShuffledCandidates } from '@/hooks/useShuffledCandidates'
-import { Alert, AlertIcon, Heading } from '@chakra-ui/react'
+import { Alert, AlertIcon, Heading, Stack } from '@chakra-ui/react'
 import { useEthers } from '@usedapp/core'
 import { VoteForm } from './VoteForm'
 
@@ -14,17 +14,15 @@ export function Vote({ electionAddress }: Props) {
   const candidates = useCandidates(electionAddress)
   const shuffledCandidates = useShuffledCandidates(candidates)
   const ballot = useBallot(account, electionAddress)
-
-  console.log({ ballot })
-
-  // TODO only display this if you have the role of a voter
+  // const registered = useRegistrationStatus(account, electionAddress)
 
   if (!candidates || !shuffledCandidates) {
     return <p>Loading...</p>
   }
 
   return (
-    <>
+    <Stack spacing={5}>
+      <Heading>Cast Your Ballot</Heading>
       {!!ballot && (
         <Alert status="success">
           <AlertIcon />
@@ -32,12 +30,16 @@ export function Vote({ electionAddress }: Props) {
           preference.
         </Alert>
       )}
-      <Heading size="sm">Voting as {account}</Heading>
+      <Alert status="info">
+        <AlertIcon />
+        You are voting as {account}.
+      </Alert>
+      <Heading size="md">Rank Candidates</Heading>
       <VoteForm
         electionAddress={electionAddress}
         candidates={candidates}
         shuffledCandidates={shuffledCandidates}
       />
-    </>
+    </Stack>
   )
 }

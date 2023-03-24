@@ -1,30 +1,29 @@
-import { useEffect, useState } from 'react'
-import { fetchRegistrationStatus } from '@/utils/fetchRegistrationStatus'
+import { ParticipantType } from '@/types/Election'
+import { Call, Falsy, useCall, useEthers } from '@usedapp/core'
+import { Contract } from 'ethers'
 
-export function useRegistrationStatus(account: string | undefined) {
-  const [isRegistered, setIsRegistered] = useState(false)
+const VOTER_ROLE =
+  '0x72c3eec1760bf69946625c2d4fb8e44e2c806345041960b434674fb9ab3976cf'
 
-  useEffect(() => {
-    getRegistrationStatus()
-  }, [account])
+const CANDIDATE_ROLE =
+  '0x262ba5fdd1dad9ccb8241da1a07fd1fd1c160e2ff97efc222645f94f62d5b43a'
 
-  async function getRegistrationStatus() {
-    if (!account) return
-    const _isRegistered = await fetchRegistrationStatus(account)
-    setIsRegistered(_isRegistered)
+export const useRegistrationStatus = (
+  account: string | undefined,
+  electionAddress: string,
+  role: ParticipantType,
+) => {
+  const { chainId } = useEthers()
+  const ROLE = role === 'voter' ? VOTER_ROLE : CANDIDATE_ROLE
+  const hasVoterRoleCall: Falsy | Call = electionAddress && {
+    args: [ROLE, account ?? ''],
+    contract: new Contract(electionAddress, [
+      'function hasRole(bytes32 role, address account) view returns(bool)',
+    ]),
+    method: 'hasRole',
   }
-
-  function register(status: boolean) {
-    if (!account) alert('Connect wallet to register')
-    localStorage.setItem(
-      `registration-status-${account}`,
-      JSON.stringify(status),
-    )
-    getRegistrationStatus()
-  }
-
-  return {
-    isRegistered,
-    register,
-  }
+  const hasVoterRole = useCall(hasVoterRoleCall, { chainId: chainId })
+    ?.value?.[0] as boolean
+  console.log({ hasVoterRole })
+  return hasVoterRole
 }

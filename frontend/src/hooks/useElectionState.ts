@@ -1,4 +1,3 @@
-import { Election, ElectionState } from '@/types/Election'
 import { Call, Falsy, useCall, useEthers } from '@usedapp/core'
 import { BigNumber, Contract } from 'ethers'
 
@@ -12,8 +11,8 @@ export const useElectionState = (electionAddress: string | undefined) => {
     method: 'state',
   }
   const response = useCall(call, { chainId: chainId })?.value?.[0]
-  if (!response) return undefined
-
-  return 1
+  if (!response) {
+    return undefined
+  }
   return BigNumber.from(response).toNumber() as number
 }
