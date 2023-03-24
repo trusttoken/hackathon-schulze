@@ -13,34 +13,50 @@ import {
 } from '@chakra-ui/react'
 import { useForm } from 'react-hook-form'
 import Image from 'next/image'
+import { useContractFunction } from '@usedapp/core'
+import { Contract } from 'ethers'
+import { toBallotArgument } from '@/utils/toBallotArgument'
 
 interface Props {
+  electionAddress: string
   candidates: Candidate[]
+  shuffledCandidates: Candidate[]
 }
 
-interface VoteFormSchema {
-  candidates: Pick<Candidate, 'address'> & { rank: number }[]
+export type CandidateChoice = Pick<Candidate, 'address'> & { rank: number }
+export interface VoteFormSchema {
+  candidates: CandidateChoice[]
 }
 
-export const VoteForm = ({ candidates }: Props) => {
+export const VoteForm = ({
+  electionAddress,
+  shuffledCandidates,
+  candidates,
+}: Props) => {
   const { handleSubmit, register } = useForm<VoteFormSchema>({
     defaultValues: {
       candidates: candidates.map(({ address }) => ({ rank: 1, address })),
     },
   })
+  const { send } = useContractFunction(
+    new Contract(electionAddress, ['function vote(uint256)']),
+    'vote',
+  )
 
   if (!candidates) {
     return <p>Loading...</p>
   }
 
-  const onSubmit = (data: VoteFormSchema) => {
-    console.log('submitting', data)
+  const onSubmit = async (ballotData: VoteFormSchema) => {
+    const ballotArgument = toBallotArgument(ballotData.candidates, candidates)
+    console.log('argument', ballotArgument)
+    await send(ballotArgument)
   }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Heading>Vote</Heading>
-      {candidates.map(({ name, description, imageUrl }, index) => (
+      {shuffledCandidates.map(({ name, description, imageUrl }, index) => (
         <div key={index}>
           <Flex gap={6}>
             <Box width={100} height={100} borderRadius={5} overflow="hidden">

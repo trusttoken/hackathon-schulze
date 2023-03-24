@@ -2,11 +2,11 @@ import { Election, ElectionState } from '@/types/Election'
 import { Call, Falsy, useCall, useEthers } from '@usedapp/core'
 import { BigNumber, Contract } from 'ethers'
 
-export const useElectionState = (electionId: string | undefined) => {
+export const useElectionState = (electionAddress: string | undefined) => {
   const { chainId } = useEthers()
-  const call: Falsy | Call = electionId && {
+  const call: Falsy | Call = electionAddress && {
     args: [],
-    contract: new Contract(electionId, [
+    contract: new Contract(electionAddress, [
       'function state() view returns(uint256)',
     ]),
     method: 'state',

@@ -1,3 +1,3 @@
 import { mockElection } from './mockElection'
 
-export const fetchElection = async (electionId: string) => {}
+export const fetchElection = async (electionAddress: string) => {}

@@ -4,12 +4,14 @@ import { shuffle } from 'lodash'
 
 export const useShuffledCandidates = (candidates: Candidate[] | undefined) => {
   const [shuffledCandidates, setShuffledCandidates] = useState<Candidate[]>()
+  const [hasShuffled, setHasShuffled] = useState(false)
 
   useEffect(() => {
-    if (candidates && candidates.length) {
+    if (candidates && candidates.length && !hasShuffled) {
+      setHasShuffled(true)
       setShuffledCandidates(shuffle(candidates))
     }
-  }, [candidates])
+  }, [candidates, hasShuffled])
 
   return shuffledCandidates
 }
