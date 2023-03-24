@@ -17,6 +17,7 @@ import Image from 'next/image'
 import { useContractFunction } from '@usedapp/core'
 import { Contract } from 'ethers'
 import { toBallotArgument } from '@/utils/toBallotArgument'
+import { CandidateItem } from '../CandidateItem'
 
 interface Props {
   electionAddress: string
@@ -61,7 +62,7 @@ export const VoteForm = ({
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Stack spacing={6}>
-        {shuffledCandidates.map(({ name, description, imageUrl }, index) => (
+        {shuffledCandidates.map((candidate, index) => (
           <div key={index}>
             <Flex gap={10}>
               <Box width={20}>
@@ -83,25 +84,7 @@ export const VoteForm = ({
                   </NumberInputStepper>
                 </NumberInput>
               </Box>
-              <Flex gap={10}>
-                <Box
-                  width={100}
-                  height={100}
-                  borderRadius={5}
-                  overflow="hidden"
-                >
-                  <Image
-                    src={`data:image/png;base64,${imageUrl}`}
-                    width={300}
-                    height={100}
-                    alt="Candidate image"
-                  />
-                </Box>
-                <Box>
-                  <Heading size="md">{name}</Heading>
-                  <Text>{description}</Text>
-                </Box>
-              </Flex>
+              <CandidateItem candidate={candidate} />
             </Flex>
           </div>
         ))}
