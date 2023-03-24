@@ -17,7 +17,7 @@ library Paths {
     using Candidates for Candidate;
     using Distances for Distance;
 
-    function cmp(Path storage path, Candidate a, Candidate b) internal view returns (Cmp) {
+    function cmp(Path memory path, Candidate a, Candidate b) internal pure returns (Cmp) {
         uint256 pathAB = Paths.p(path, a, b);
         uint256 pathBA = Paths.p(path, b, a);
         if (pathAB > pathBA) {
@@ -28,11 +28,11 @@ library Paths {
         return Cmp.Equal;
     }
 
-    function p(Path storage path, Candidate a, Candidate b) internal view returns (uint256) {
+    function p(Path memory path, Candidate a, Candidate b) internal pure returns (uint256) {
         return path.paths[a.index()][b.index()];
     }
 
-    function calculate(Path storage path, Distance storage distance) internal {
+    function calculate(Path memory path, Distance storage distance) internal view {
         path.numCandidates = distance.numCandidates;
         for (Candidate a; a.lt(path.numCandidates); a = a.next()) {
             for (Candidate b; b.lt(a.index()); b = b.next()) {
