@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "hardhat compile",
+    "deploy": "mkdir -p build && mars --input ./artifacts/contracts/SchulzeMethodElectionFactory.sol && ts-node scripts/deploy.ts --network goerli --out-file ./deployments-goerli.json",
     "lint": "solhint 'contracts/**/*.sol'",
     "slither": "slither contracts",
     "test": "hardhat test"

@@ -116,3 +116,5 @@ artifacts
 
 
 .env.local
+
+build
