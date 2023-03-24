@@ -11,7 +11,6 @@ function useElectionResults() {
 
 export function Tally({ election }: Props) {
   const candidates = useElectionResults()
-  console.log({ candidates })
   return (
     <>
       Results for Election

@@ -1,7 +1,7 @@
 import { useBallot } from '@/hooks/useBallot'
 import { useCandidates } from '@/hooks/useCandidates'
 import { useShuffledCandidates } from '@/hooks/useShuffledCandidates'
-import { Alert, AlertIcon, Heading, Stack } from '@chakra-ui/react'
+import { Alert, AlertIcon, Box, Heading, Stack } from '@chakra-ui/react'
 import { useEthers } from '@usedapp/core'
 import { VoteForm } from './VoteForm'
 
@@ -33,11 +33,13 @@ export function Vote({ electionAddress }: Props) {
         <AlertIcon />
         You are voting as {account}.
       </Alert>
-      <VoteForm
-        electionAddress={electionAddress}
-        candidates={candidates}
-        shuffledCandidates={shuffledCandidates}
-      />
+      <Box paddingTop={10}>
+        <VoteForm
+          electionAddress={electionAddress}
+          candidates={candidates}
+          shuffledCandidates={shuffledCandidates}
+        />
+      </Box>
     </Stack>
   )
 }

@@ -24,6 +24,5 @@ export const useRegistrationStatus = (
   }
   const hasVoterRole = useCall(hasVoterRoleCall, { chainId: chainId })
     ?.value?.[0] as boolean
-  console.log({ hasVoterRole })
   return hasVoterRole
 }

@@ -5,7 +5,6 @@ import { fetchCandidates } from '@/utils/fetchCandidates'
 
 export const useCandidates = (electionAddress: string) => {
   const candidateAddresses = useCandidateAddresses(electionAddress)
-  console.log('candidateAddresses', candidateAddresses)
   const [candidates, setCandidates] = useState<Candidate[]>()
 
   useEffect(() => {
