@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "hardhat compile",
-    "deploy": "mkdir -p build && mars --input ./artifacts/contracts/SchulzeMethodElectionFactory.sol && ts-node scripts/deploy.ts --network goerli --out-file ./deployments-goerli.json",
+    "deploy": "mkdir -p build && mars --input ./artifacts/contracts/SchulzeMethodElectionFactory.sol && ts-node scripts/deploy.ts --network https://goerli.optimism.io/ --out-file ./deployments-optimism_goerli.json",
     "lint": "solhint 'contracts/**/*.sol'",
     "slither": "slither contracts",
     "test": "hardhat test"
