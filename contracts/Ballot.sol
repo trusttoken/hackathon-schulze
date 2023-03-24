@@ -21,7 +21,7 @@ library Ballots {
     }
 
     function rankOf(Ballot ballot, Candidate candidate) internal pure returns (Rank) {
-        assert(candidate.lt(MAX_CANDIDATES));
+        assert(candidate.index() < MAX_CANDIDATES);
         uint8 rawRank = uint8(Ballot.unwrap(ballot) >> (8 * candidate.index()));
         return Ranks.from(rawRank);
     }

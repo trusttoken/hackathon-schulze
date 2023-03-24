@@ -29,8 +29,6 @@ contract SchulzeMethodElection is AccessControlEnumerable {
     State public state;
     mapping(address => Ballot) public ballotOf;
     Distance private distances;
-    Path private paths;
-    Sort private sorts;
 
     event RegistrationClosed();
     event Voted(address, Ballot);
@@ -129,17 +127,22 @@ contract SchulzeMethodElection is AccessControlEnumerable {
         onlyRole(DEFAULT_ADMIN_ROLE)
     {
         state = State.Tally;
-        paths.calculate(distances);
-        sorts.calculate(paths);
         emit VotingClosed();
     }
 
     // State.Tally
 
     function rankCandidates() external view returns (address[] memory) {
-        address[] memory candidates = new address[](sorts.length());
-        for (uint256 i; i < sorts.length(); i++) {
-            candidates[i] = getRoleMember(CANDIDATE_ROLE, sorts.at(i).index());
+        Path memory path;
+        path.calculate(distances);
+
+        Sort memory sort;
+        sort.calculate(path);
+
+        uint256 _numCandidates = numCandidates();
+        address[] memory candidates = new address[](_numCandidates);
+        for (uint256 i; i < _numCandidates; i++) {
+            candidates[i] = getRoleMember(CANDIDATE_ROLE, sort.at(i).index());
         }
         return candidates;
     }

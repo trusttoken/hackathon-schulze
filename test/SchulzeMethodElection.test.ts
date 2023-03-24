@@ -1,8 +1,10 @@
 import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { expect } from "chai";
+import { BigNumber } from "ethers";
 import { ethers } from "hardhat";
 
 describe("SchulzeMethodElection", function () {
+  // https://en.wikipedia.org/wiki/Schulze_method#Example
   const VOTERS = [
     ["ACBED", 5],
     ["ADECB", 5],
@@ -12,17 +14,30 @@ describe("SchulzeMethodElection", function () {
     ["CBADE", 2],
     ["DCEBA", 7],
     ["EBADC", 8]
-  ]
+  ];
+  const EXPECTED = "EACBD";
 
   function constructBallot(ballotString) {
     let ballot = ethers.constants.Zero;
+    const candidates = getCandidates(ballotString);
     for (let i in ballotString) {
-      const rank = 4 - i;
-      const candidate = ballotString.codePointAt(i) - 65;
-      ballot = ballot.add(rank << (8 * candidate));
-      console.log("ballotString: " + ballotString + " rank: " + rank + " candidate: " + candidate + " ballot: " + ballot);
+      const rank = BigNumber.from(4 - i);
+      ballot = ballot.add(rank.shl(8 * candidates[i]));
     }
     return ballot;
+  }
+
+  function getCandidates(ballotString) {
+    let result = []
+    for (let i in ballotString) {
+      result.push(ballotString.codePointAt(i) - 65);
+    }
+    return result;
+  }
+
+  function permuteRanks(ballotString, candidateAddresses) {
+    const candidates = getCandidates(ballotString);
+    return candidates.map((candidate) => candidateAddresses[candidate].address)
   }
 
   function constructVoter(owner) {
@@ -55,28 +70,26 @@ describe("SchulzeMethodElection", function () {
       }
     }
 
-    return { owner, schulze, a, b, c, d, e, voters };
+    const expected = permuteRanks(EXPECTED, [a, b, c, d, e]);
+
+    return { owner, schulze, voters, expected };
   }
 
   it("works", async function () {
-    const { schulze, a, b, c, d, e, voters } = await loadFixture(schulzeMethodFixture);
+    const { schulze, voters, expected } = await loadFixture(schulzeMethodFixture);
 
     schulze.closeRegistration();
-    console.log("Closed registration");
 
     const numCandidates = await schulze.numCandidates();
 
     for (let [voter, ballot] of voters) {
-      console.log("voter: " + voter + " ballot: " + ballot);
       await schulze.connect(voter).vote(ballot);
       for (let candidate in [...Array(numCandidates)]) {
-        console.log("    candidate: " + candidate + " rank: " + await schulze.getVoterCandidateRank(voter.address, candidate));
       }
     }
 
     await schulze.closeVoting();
-    console.log("Closed voting");
 
-    expect(await schulze.rankCandidates()).to.equal([e.address, a.address, c.address, b.address, d.address]);
+    expect(await schulze.rankCandidates()).to.deep.equal(expected);
   });
 });
