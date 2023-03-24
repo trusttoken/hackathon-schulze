@@ -41,7 +41,7 @@ export const VoteForm = ({
       candidates: candidates.map(({ address }) => ({ rank: 1, address })),
     },
   })
-  const { send } = useContractFunction(
+  const { send, state } = useContractFunction(
     new Contract(electionAddress, ['function vote(uint256)']),
     'vote',
   )
@@ -55,6 +55,9 @@ export const VoteForm = ({
     await send(ballotArgument)
   }
 
+  const loading = state.status === 'Mining'
+  const isDisabled = disabled || loading
+
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Stack spacing={6}>
@@ -64,7 +67,7 @@ export const VoteForm = ({
               <Box width={20}>
                 <Text fontSize={12}>Choose Rank</Text>
                 <NumberInput
-                  isDisabled={disabled}
+                  isDisabled={isDisabled}
                   defaultValue={1}
                   min={1}
                   max={candidates.length}
@@ -80,24 +83,33 @@ export const VoteForm = ({
                   </NumberInputStepper>
                 </NumberInput>
               </Box>
-              <Box width={100} height={100} borderRadius={5} overflow="hidden">
-                <Image
-                  src={`data:image/png;base64,${imageUrl}`}
-                  width={300}
+              <Flex gap={10}>
+                <Box
+                  width={100}
                   height={100}
-                  alt="Candidate image"
-                />
-              </Box>
-              <Box>
-                <Heading size="md">{name}</Heading>
-                <Text>{description}</Text>
-              </Box>
+                  borderRadius={5}
+                  overflow="hidden"
+                >
+                  <Image
+                    src={`data:image/png;base64,${imageUrl}`}
+                    width={300}
+                    height={100}
+                    alt="Candidate image"
+                  />
+                </Box>
+                <Box>
+                  <Heading size="md">{name}</Heading>
+                  <Text>{description}</Text>
+                </Box>
+              </Flex>
             </Flex>
           </div>
         ))}
       </Stack>
       <Button
-        isDisabled={disabled}
+        loadingText="Submitting Your Vote"
+        isLoading={loading}
+        isDisabled={isDisabled}
         colorScheme="green"
         width="100%"
         type="submit"

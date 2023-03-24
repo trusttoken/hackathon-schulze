@@ -28,13 +28,6 @@ export function Vote({ electionAddress }: Props) {
   return (
     <Stack spacing={5}>
       <Heading>Rank Candidates</Heading>
-      {!!ballot && (
-        <Alert status="success">
-          <AlertIcon />
-          You have successfully voted. If you vote again, it will update your
-          preference.
-        </Alert>
-      )}
       {isRegisteredAsVoter ? (
         <>
           <Alert status="info">
@@ -46,6 +39,13 @@ export function Vote({ electionAddress }: Props) {
         <Alert status="error">
           <AlertIcon />
           Sorry, you are not registered as a voter. Voting won't work.
+        </Alert>
+      )}
+      {!!ballot && (
+        <Alert status="success">
+          <AlertIcon />
+          You have successfully voted. If you vote again, it will update your
+          preference.
         </Alert>
       )}
       <Box paddingTop={10}>
