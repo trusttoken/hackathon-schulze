@@ -13,21 +13,26 @@ struct Sort {
 library Sorts {
     using Candidates for Candidate;
     using Paths for Path;
+    using Sorts for Sort;
 
-    function at(Sort memory sort, uint256 i) internal pure returns (Candidate) {
+    function get(Sort memory sort, uint256 i) internal pure returns (Candidate) {
         return sort.sorts[i];
+    }
+
+    function set(Sort memory sort, uint256 i, Candidate candidate) internal pure {
+        sort.sorts[i] = candidate;
     }
 
     function calculate(Sort memory sort, Path memory path) internal pure {
         for (Candidate a; a.lt(path.numCandidates); a = a.next()) {
             sort.sorts[a.index()] = a;
             for (uint256 i = a.index(); i > 0; i--) {
-                Candidate b = sort.sorts[i-1];
+                Candidate b = sort.get(i - 1);
                 if (path.cmp(a, b) != Cmp.Greater) {
                     break;
                 }
-                sort.sorts[i] = b;
-                sort.sorts[i-1] = a;
+                sort.set(i, b);
+                sort.set(i - 1, a);
             }
         }
     }

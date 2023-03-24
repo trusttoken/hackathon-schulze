@@ -142,7 +142,7 @@ contract SchulzeMethodElection is AccessControlEnumerable {
         uint256 _numCandidates = numCandidates();
         address[] memory candidates = new address[](_numCandidates);
         for (uint256 i; i < _numCandidates; i++) {
-            candidates[i] = getRoleMember(CANDIDATE_ROLE, sort.at(i).index());
+            candidates[i] = getRoleMember(CANDIDATE_ROLE, sort.get(i).index());
         }
         return candidates;
     }
