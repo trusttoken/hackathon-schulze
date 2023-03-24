@@ -1,5 +1,6 @@
 import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { expect } from "chai";
+import { BigNumber } from "ethers";
 import { ethers } from "hardhat";
 
 describe("SchulzeMethodElection", function () {
@@ -17,9 +18,9 @@ describe("SchulzeMethodElection", function () {
   function constructBallot(ballotString) {
     let ballot = ethers.constants.Zero;
     for (let i in ballotString) {
-      const rank = 4 - i;
+      const rank = BigNumber.from(4 - i);
       const candidate = ballotString.codePointAt(i) - 65;
-      ballot = ballot.add(rank << (8 * candidate));
+      ballot = ballot.add(rank.shl(8 * candidate));
       console.log("ballotString: " + ballotString + " rank: " + rank + " candidate: " + candidate + " ballot: " + ballot);
     }
     return ballot;
@@ -67,7 +68,7 @@ describe("SchulzeMethodElection", function () {
     const numCandidates = await schulze.numCandidates();
 
     for (let [voter, ballot] of voters) {
-      console.log("voter: " + voter + " ballot: " + ballot);
+      console.log("voter: " + voter.address + " ballot: " + ballot);
       await schulze.connect(voter).vote(ballot);
       for (let candidate in [...Array(numCandidates)]) {
         console.log("    candidate: " + candidate + " rank: " + await schulze.getVoterCandidateRank(voter.address, candidate));
