@@ -80,12 +80,8 @@ describe("SchulzeMethodElection", function () {
 
     schulze.closeRegistration();
 
-    const numCandidates = await schulze.numCandidates();
-
     for (let [voter, ballot] of voters) {
       await schulze.connect(voter).vote(ballot);
-      for (let candidate in [...Array(numCandidates)]) {
-      }
     }
 
     await schulze.closeVoting();
