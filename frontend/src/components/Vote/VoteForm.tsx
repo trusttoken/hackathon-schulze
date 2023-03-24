@@ -13,7 +13,6 @@ import {
   Text,
 } from '@chakra-ui/react'
 import { useForm } from 'react-hook-form'
-import Image from 'next/image'
 import { useContractFunction } from '@usedapp/core'
 import { Contract } from 'ethers'
 import { toBallotArgument } from '@/utils/toBallotArgument'
