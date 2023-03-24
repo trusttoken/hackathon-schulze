@@ -30,7 +30,12 @@ export function Results({ electionAddress }: Props) {
         {results.map((address, rank) => {
           const candidate = candidateMap[address]
           return (
-            <Flex justifyContent="center" alignItems="center" gap={7}>
+            <Flex
+              key={address}
+              justifyContent="center"
+              alignItems="center"
+              gap={7}
+            >
               <Heading color="gray.600">#{rank + 1}</Heading>
               <CandidateItem candidate={candidate} />
             </Flex>
