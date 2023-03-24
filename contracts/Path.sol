@@ -16,10 +16,11 @@ struct Path {
 library Paths {
     using Candidates for Candidate;
     using Distances for Distance;
+    using Paths for Path;
 
     function cmp(Path memory path, Candidate a, Candidate b) internal pure returns (Cmp) {
-        uint256 pathAB = Paths.p(path, a, b);
-        uint256 pathBA = Paths.p(path, b, a);
+        uint256 pathAB = path.getP(a, b);
+        uint256 pathBA = path.getP(b, a);
         if (pathAB > pathBA) {
             return Cmp.Greater;
         } else if (pathAB < pathBA) {
@@ -28,8 +29,12 @@ library Paths {
         return Cmp.Equal;
     }
 
-    function p(Path memory path, Candidate a, Candidate b) internal pure returns (uint256) {
+    function getP(Path memory path, Candidate a, Candidate b) internal pure returns (uint256) {
         return path.paths[a.index()][b.index()];
+    }
+
+    function setP(Path memory path, Candidate a, Candidate b, uint256 newP) internal pure {
+        path.paths[a.index()][b.index()] = newP;
     }
 
     function calculate(Path memory path, Distance storage distance) internal view {
@@ -39,9 +44,9 @@ library Paths {
                 uint256 distanceAB = distance.d(a, b);
                 uint256 distanceBA = distance.d(b, a);
                 if (distanceAB > distanceBA) {
-                    path.paths[a.index()][b.index()] = distanceAB;
+                    path.setP(a, b, distanceAB);
                 } else if (distanceBA > distanceAB) {
-                    path.paths[b.index()][a.index()] = distanceBA;
+                    path.setP(b, a, distanceBA);
                 }
             }
         }
@@ -50,14 +55,14 @@ library Paths {
                 if (a.eq(b)) {
                     continue;
                 }
-                uint256 pathBA = Paths.p(path, b, a);
+                uint256 pathBA = path.getP(b, a);
                 for (Candidate c; c.lt(path.numCandidates); c = c.next()) {
                     if (a.eq(c) || b.eq(c)) {
                         continue;
                     }
-                    uint256 pathAC = Paths.p(path, a, c);
-                    uint256 pathBC = Paths.p(path, b, c);
-                    path.paths[b.index()][c.index()] = Math.max(pathBC, Math.min(pathBA, pathAC));
+                    uint256 pathAC = path.getP(a, c);
+                    uint256 pathBC = path.getP(b, c);
+                    path.setP(b, c, Math.max(pathBC, Math.min(pathBA, pathAC)));
                 }
             }
         }
