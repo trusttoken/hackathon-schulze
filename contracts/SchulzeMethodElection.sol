@@ -62,6 +62,19 @@ contract SchulzeMethodElection is AccessControlEnumerable {
         return uint8(_numCandidates);
     }
 
+    function getCandidates() external view returns (address[] memory) {
+        uint8 _numCandidates = numCandidates();
+        address[] memory candidates = new address[](_numCandidates);
+        for (uint8 i = 0; i < _numCandidates; i++) {
+            candidates[i] = getRoleMember(CANDIDATE_ROLE, i);
+        }
+        return candidates;
+    }
+
+    function getVoterCandidateRank(address voter, Candidate candidate) returns (Rank) {
+        return ballotOf(voter).rankOf(candidate);
+    }
+
     constructor() {
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
     }
@@ -123,15 +136,6 @@ contract SchulzeMethodElection is AccessControlEnumerable {
         address[] memory candidates = new address[](sorts.length());
         for (uint256 i; i < sorts.length(); i++) {
             candidates[i] = getRoleMember(CANDIDATE_ROLE, sorts.at(i).index());
-        }
-        return candidates;
-    }
-
-    function getCandidates() external view returns (address[] memory) {
-        uint8 _numCandidates = numCandidates();
-        address[] memory candidates = new address[](_numCandidates);
-        for (uint8 i = 0; i < _numCandidates; i++) {
-            candidates[i] = getRoleMember(CANDIDATE_ROLE, i);
         }
         return candidates;
     }
