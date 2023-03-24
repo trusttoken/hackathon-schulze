@@ -7,7 +7,7 @@ import { Rank, Ranks } from "./Rank.sol";
 
 struct Distance {
     uint256[MAX_CANDIDATES][MAX_CANDIDATES] distances;
-    uint8 numCandidates;
+    Candidate numCandidates;
 }
 
 library Distances {
@@ -21,12 +21,12 @@ library Distances {
 
     function setNumCandidates(Distance storage distance, uint8 _numCandidates) internal {
         assert(_numCandidates <= MAX_CANDIDATES);
-        distance.numCandidates = _numCandidates;
+        distance.numCandidates = Candidate.wrap(_numCandidates);
     }
 
     function addBallot(Distance storage distance, Ballot ballot) internal {
         for (Candidate a; a.lt(distance.numCandidates); a = a.next()) {
-            for (Candidate b; b.lt(a.index()); b = b.next()) {
+            for (Candidate b; b.lt(a); b = b.next()) {
                 Rank aRank = ballot.rankOf(a);
                 Rank bRank = ballot.rankOf(b);
                 if (aRank.gt(bRank)) {
@@ -40,7 +40,7 @@ library Distances {
 
     function removeBallot(Distance storage distance, Ballot ballot) internal {
         for (Candidate a; a.lt(distance.numCandidates); a = a.next()) {
-            for (Candidate b; b.lt(a.index()); b = b.next()) {
+            for (Candidate b; b.lt(a); b = b.next()) {
                 Rank aRank = ballot.rankOf(a);
                 Rank bRank = ballot.rankOf(b);
                 if (aRank.gt(bRank)) {

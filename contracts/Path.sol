@@ -10,7 +10,7 @@ enum Cmp { Less, Equal, Greater }
 
 struct Path {
     uint256[MAX_CANDIDATES][MAX_CANDIDATES] paths;
-    uint8 numCandidates;
+    Candidate numCandidates;
 }
 
 library Paths {
@@ -35,7 +35,7 @@ library Paths {
     function calculate(Path memory path, Distance storage distance) internal view {
         path.numCandidates = distance.numCandidates;
         for (Candidate a; a.lt(path.numCandidates); a = a.next()) {
-            for (Candidate b; b.lt(a.index()); b = b.next()) {
+            for (Candidate b; b.lt(a); b = b.next()) {
                 uint256 distanceAB = distance.d(a, b);
                 uint256 distanceBA = distance.d(b, a);
                 if (distanceAB > distanceBA) {

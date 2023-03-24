@@ -14,8 +14,8 @@ library Candidates {
         return Candidate.unwrap(a) == Candidate.unwrap(b);
     }
 
-    function lt(Candidate a, uint8 bound) internal pure returns (bool) {
-        return Candidate.unwrap(a) < bound;
+    function lt(Candidate a, Candidate b) internal pure returns (bool) {
+        return Candidate.unwrap(a) < Candidate.unwrap(b);
     }
 
     function next(Candidate candidate) internal pure returns (Candidate) {
