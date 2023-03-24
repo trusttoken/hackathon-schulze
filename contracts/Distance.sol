@@ -13,10 +13,19 @@ struct Distance {
 library Distances {
     using Ballots for Ballot;
     using Candidates for Candidate;
+    using Distances for Distance;
     using Ranks for Rank;
 
-    function d(Distance storage distance, Candidate a, Candidate b) internal view returns (uint256) {
+    function getD(Distance storage distance, Candidate a, Candidate b) internal view returns (uint256) {
         return distance.distances[a.index()][b.index()];
+    }
+
+    function incD(Distance storage distance, Candidate a, Candidate b) internal {
+        distance.distances[a.index()][b.index()] += 1;
+    }
+
+    function decD(Distance storage distance, Candidate a, Candidate b) internal {
+        distance.distances[a.index()][b.index()] -= 1;
     }
 
     function setNumCandidates(Distance storage distance, uint8 _numCandidates) internal {
@@ -30,9 +39,9 @@ library Distances {
                 Rank aRank = ballot.rankOf(a);
                 Rank bRank = ballot.rankOf(b);
                 if (aRank.gt(bRank)) {
-                    distance.distances[a.index()][b.index()] += 1;
+                    distance.incD(a, b);
                 } else if (bRank.gt(aRank)) {
-                    distance.distances[b.index()][a.index()] += 1;
+                    distance.incD(b, a);
                 }
             }
         }
@@ -44,9 +53,9 @@ library Distances {
                 Rank aRank = ballot.rankOf(a);
                 Rank bRank = ballot.rankOf(b);
                 if (aRank.gt(bRank)) {
-                    distance.distances[a.index()][b.index()] -= 1;
+                    distance.decD(a, b);
                 } else if (bRank.gt(aRank)) {
-                    distance.distances[b.index()][a.index()] -= 1;
+                    distance.decD(b, a);
                 }
             }
         }

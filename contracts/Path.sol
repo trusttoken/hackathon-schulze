@@ -41,8 +41,8 @@ library Paths {
         path.numCandidates = distance.numCandidates;
         for (Candidate a; a.lt(path.numCandidates); a = a.next()) {
             for (Candidate b; b.lt(a); b = b.next()) {
-                uint256 distanceAB = distance.d(a, b);
-                uint256 distanceBA = distance.d(b, a);
+                uint256 distanceAB = distance.getD(a, b);
+                uint256 distanceBA = distance.getD(b, a);
                 if (distanceAB > distanceBA) {
                     path.setP(a, b, distanceAB);
                 } else if (distanceBA > distanceAB) {
