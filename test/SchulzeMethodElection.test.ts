@@ -21,7 +21,6 @@ describe("SchulzeMethodElection", function () {
       const rank = BigNumber.from(4 - i);
       const candidate = ballotString.codePointAt(i) - 65;
       ballot = ballot.add(rank.shl(8 * candidate));
-      console.log("ballotString: " + ballotString + " rank: " + rank + " candidate: " + candidate + " ballot: " + ballot);
     }
     return ballot;
   }
@@ -63,21 +62,18 @@ describe("SchulzeMethodElection", function () {
     const { schulze, a, b, c, d, e, voters } = await loadFixture(schulzeMethodFixture);
 
     schulze.closeRegistration();
-    console.log("Closed registration");
 
     const numCandidates = await schulze.numCandidates();
 
     for (let [voter, ballot] of voters) {
-      console.log("voter: " + voter.address + " ballot: " + ballot);
       await schulze.connect(voter).vote(ballot);
       for (let candidate in [...Array(numCandidates)]) {
-        console.log("    candidate: " + candidate + " rank: " + await schulze.getVoterCandidateRank(voter.address, candidate));
       }
     }
 
     await schulze.closeVoting();
-    console.log("Closed voting");
 
-    expect(await schulze.rankCandidates()).to.equal([e.address, a.address, c.address, b.address, d.address]);
+    const expected = [e.address, a.address, c.address, b.address, d.address];
+    expect(await schulze.rankCandidates()).to.deep.equal(expected);
   });
 });
