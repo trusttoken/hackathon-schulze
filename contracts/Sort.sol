@@ -25,13 +25,11 @@ library Sorts {
     function calculate(Sort storage sort, Path storage path) internal {
         for (Candidate a; a.lt(path.numCandidates); a.next()) {
             sort.sorts.push(a);
-            uint256 aIndex;
-            for (uint256 bIndex = sort.sorts.length - 1; bIndex >= 0; bIndex--) {
-                Candidate b = sort.sorts[bIndex];
+            for (uint256 i = sort.sorts.length - 1; i > 0; i--) {
+                Candidate b = sort.sorts[i-1];
                 if (path.cmp(a, b) == Cmp.Greater) {
-                    sort.sorts[aIndex] = b;
-                    sort.sorts[bIndex] = a;
-                    aIndex = bIndex;
+                    sort.sorts[i] = b;
+                    sort.sorts[i-1] = a;
                 }
             }
         }
